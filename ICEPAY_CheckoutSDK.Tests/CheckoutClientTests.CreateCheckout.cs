@@ -37,6 +37,9 @@ public class CheckoutClientTests_Serialization
             Amount = new Amount(1000, Amount.CurrencyEur),
             Description = "Test Order",
             Reference = "Order-123",
+            Meta = new Metadata()
+                .WithIntegrationInformation("icepay-checkout-sdk", "1.0.0", "icepay-checkout-sdk-tests")
+                .WithCustomerEmail("test@example.com"),
             RedirectUrl = "https://example.com",
             WebhookUrl = "https://example.com"
         };
@@ -50,7 +53,7 @@ public class CheckoutClientTests_Serialization
         
         // Verify other properties deserialized correctly as well
         Assert.Equal("c200aa9e-b203-455b-891d-03460775d722", result.Key);
-        Assert.Equal("test@example.com", result.Meta["customer"]["email"]);
+        Assert.Equal("test@example.com", result.Meta["customer"]["email"].ToString());
         Assert.Equal(1000, result.Amount.Value);
     }
 }

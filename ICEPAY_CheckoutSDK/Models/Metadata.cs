@@ -5,23 +5,49 @@ namespace ICEPAY.CheckoutSDK.Models;
 
 public class Metadata
 {
-
-    private readonly JsonObject _data;
+    private JsonObject _data;
 
     public Metadata(JsonObject? data = null)
     {
         _data = data ?? new JsonObject();
     }
     
-    public Metadata()
+    public Metadata() : this(null) { }
+
+    // JsonExtensionData flattens this into the parent object on serialization
+    [JsonExtensionData]
+    public JsonObject Data
     {
-        _data = new JsonObject();
+        get => _data;
+        set => _data = value ?? new JsonObject();
     }
 
-    // Expose the raw data bag. The JsonExtensionData attribute makes the contents
-    // appear at the top level when this object is serialized.
-    [JsonExtensionData]
-    public JsonObject Data => _data;
+    /// <summary>
+    /// Magic indexer: automatically creates nested JsonObjects on write.
+    /// </summary>
+    public JsonNode? this[string key]
+    {
+        get => _data[key];
+        set => _data[key] = value;
+    }
+
+    /// <summary>
+    /// Ensures that the child node exists and is a JsonObject.
+    /// Useful for nested access like meta.Ensure("customer")["email"] = ...
+    /// </summary>
+    public JsonObject Ensure(string key)
+    {
+        if (_data[key] is JsonObject obj)
+            return obj;
+
+        obj = new JsonObject();
+        _data[key] = obj;
+        return obj;
+    }
+
+    // --------------------------------------------------------------------
+    //  Convenience builder methods
+    // --------------------------------------------------------------------
 
     public Metadata WithCustomer(JsonObject customer)
     {
@@ -31,44 +57,21 @@ public class Metadata
 
     public Metadata WithCustomerEmail(string email)
     {
-        if (!_data.ContainsKey("customer") || _data["customer"] is not JsonObject customer)
-        {
-            customer = new JsonObject();
-        }
-
+        var customer = Ensure("customer");
         customer["email"] = email;
-        _data["customer"] = customer;
         return this;
     }
 
     public Metadata WithIntegrationInformation(string type, string version, string developer)
     {
-        JsonObject integration;
-        if (_data.ContainsKey("integration") && _data["integration"] is JsonObject dict)
-        {
-            integration = dict;
-        }
-        else
-        {
-            integration = new JsonObject();
-        }
+        var integration = Ensure("integration");
 
-        integration["type"] = type;
-        integration["version"] = version;
+        integration["type"]      = type;
+        integration["version"]   = version;
         integration["developer"] = developer;
-        _data["integration"] = integration;
+
         return this;
     }
-    
-    public JsonNode? this[string key]
-    {
-        get => Data[key];
-        set => Data[key] = value;
-    }
 
-    // public static Metadata FromDictionary(IDictionary<string, object?> dict)
-    // {
-    //     return new Metadata(JsonObject.Create(dict));
-    // }
-    public JsonObject ToJson() => Data;
+    public JsonObject ToJson() => _data;
 }
