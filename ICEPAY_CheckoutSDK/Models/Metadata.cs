@@ -1,8 +1,10 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace ICEPAY.CheckoutSDK.Models;
 
+[JsonConverter(typeof(MetadataJsonConverter))]
 public class Metadata
 {
     private JsonObject _data;
@@ -11,11 +13,9 @@ public class Metadata
     {
         _data = data ?? new JsonObject();
     }
-    
-    public Metadata() : this(null) { }
 
-    // JsonExtensionData flattens this into the parent object on serialization
-    [JsonExtensionData]
+    public Metadata() : this(null) { }
+    
     public JsonObject Data
     {
         get => _data;
@@ -74,4 +74,18 @@ public class Metadata
     }
 
     public JsonObject ToJson() => _data;
+
+    private sealed class MetadataJsonConverter : JsonConverter<Metadata>
+    {
+        public override Metadata? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var node = JsonNode.Parse(ref reader);
+            return new Metadata(node as JsonObject ?? new JsonObject());
+        }
+
+        public override void Write(Utf8JsonWriter writer, Metadata value, JsonSerializerOptions options)
+        {
+            (value.Data ?? new JsonObject()).WriteTo(writer, options);
+        }
+    }
 }
