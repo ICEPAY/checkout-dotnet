@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace ICEPAY.CheckoutSDK.Models;
@@ -5,24 +6,24 @@ namespace ICEPAY.CheckoutSDK.Models;
 public class Metadata
 {
 
-    private readonly Dictionary<string, object?> _data;
+    private readonly JsonObject _data;
 
-    public Metadata(Dictionary<string, object?>? data = null)
+    public Metadata(JsonObject? data = null)
     {
-        _data = data ?? new Dictionary<string, object?>();
+        _data = data ?? new JsonObject();
     }
     
     public Metadata()
     {
-        _data = new Dictionary<string, object?>();
+        _data = new JsonObject();
     }
 
     // Expose the raw data bag. The JsonExtensionData attribute makes the contents
     // appear at the top level when this object is serialized.
     [JsonExtensionData]
-    public IDictionary<string, object?> Data => _data;
+    public JsonObject Data => _data;
 
-    public Metadata WithCustomer(Dictionary<string, object?> customer)
+    public Metadata WithCustomer(JsonObject customer)
     {
         _data["customer"] = customer;
         return this;
@@ -30,9 +31,9 @@ public class Metadata
 
     public Metadata WithCustomerEmail(string email)
     {
-        if (!_data.TryGetValue("customer", out var existing) || existing is not Dictionary<string, object?> customer)
+        if (!_data.ContainsKey("customer") || _data["customer"] is not JsonObject customer)
         {
-            customer = new Dictionary<string, object?>();
+            customer = new JsonObject();
         }
 
         customer["email"] = email;
@@ -42,14 +43,14 @@ public class Metadata
 
     public Metadata WithIntegrationInformation(string type, string version, string developer)
     {
-        Dictionary<string, object?> integration;
-        if (_data.TryGetValue("integration", out var existing) && existing is Dictionary<string, object?> dict)
+        JsonObject integration;
+        if (_data.ContainsKey("integration") && _data["integration"] is JsonObject dict)
         {
             integration = dict;
         }
         else
         {
-            integration = new Dictionary<string, object?>();
+            integration = new JsonObject();
         }
 
         integration["type"] = type;
@@ -58,6 +59,16 @@ public class Metadata
         _data["integration"] = integration;
         return this;
     }
+    
+    public JsonNode? this[string key]
+    {
+        get => Data[key];
+        set => Data[key] = value;
+    }
 
-    public static Metadata FromDictionary(Dictionary<string, object?> data) => new(data);
+    // public static Metadata FromDictionary(IDictionary<string, object?> dict)
+    // {
+    //     return new Metadata(JsonObject.Create(dict));
+    // }
+    public JsonObject ToJson() => Data;
 }

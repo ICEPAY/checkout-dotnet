@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+
 namespace ICEPAY.CheckoutSDK.Models.Request;
 
 public class Checkout
@@ -58,7 +60,7 @@ public class Checkout
         return this;
     }
     
-    public Checkout WithCustomer(Dictionary<string, object?> customer)
+    public Checkout WithCustomer(JsonObject customer)
     {
         Meta.WithCustomer(customer);
         return this;

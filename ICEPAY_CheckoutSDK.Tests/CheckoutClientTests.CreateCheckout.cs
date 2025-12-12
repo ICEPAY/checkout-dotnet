@@ -50,7 +50,7 @@ public class CheckoutClientTests_Serialization
         
         // Verify other properties deserialized correctly as well
         Assert.Equal("c200aa9e-b203-455b-891d-03460775d722", result.Key);
-        Assert.Equal("test@example.com", ((JsonElement)result.Meta.Data["customer"]).GetProperty("email").GetString());
+        Assert.Equal("test@example.com", result.Meta["customer"]["email"]);
         Assert.Equal(1000, result.Amount.Value);
     }
 }
