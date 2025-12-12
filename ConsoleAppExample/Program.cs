@@ -7,10 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 Console.WriteLine("Hello, World!");
 
-
 using IHost host = Host.CreateDefaultBuilder(args).UseEnvironment("Development").Build();
-
-// Ask the service provider for the configuration abstraction.
 IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
 
 var merchantId = config["ICEPAY:MERCHANT_ID"];
@@ -36,7 +33,7 @@ var checkout = new Checkout()
 }; 
 
 checkout.WithPaymentMethod("ideal");
-// checkout.WithCustomerEmail("test@example.com");
+checkout.WithCustomerEmail("test@example.com");
 
 var createdCheckout = await checkoutClient.CreateCheckout(checkout);
 
