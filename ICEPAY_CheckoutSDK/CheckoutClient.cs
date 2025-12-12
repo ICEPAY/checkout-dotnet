@@ -2,8 +2,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ICEPAY.CheckoutSDK.Models.Response;
+using ICEPAY.CheckoutSDK.Models;
+using ICEPAY.CheckoutSDK.Models.Request;
+using Checkout = ICEPAY.CheckoutSDK.Models.Response.Checkout;
+using Forward = ICEPAY.CheckoutSDK.Models.Response.Forward;
 using PaymentMethod = ICEPAY.CheckoutSDK.Models.Response.PaymentMethod;
+using Refund = ICEPAY.CheckoutSDK.Models.Response.Refund;
 
 namespace ICEPAY.CheckoutSDK;
 
@@ -31,32 +35,32 @@ public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerialize
         return this;
     }
 
-    public Task<PaymentMethod[]?> GetPaymentMethods()
+    public Task<PaymentMethod[]?> GetPaymentMethods(CancellationToken cancellationToken = default)
     {
-        return CallCheckoutApi<PaymentMethod[]?>(BaseUrl + "api/payments/methods", null);
+        return CallCheckoutApi<PaymentMethod[]?>(BaseUrl + "api/payments/methods", null, cancellationToken);
     }
 
     public Task<Checkout?> CreateCheckout(
-        Models.Request.Checkout checkout)
+        Models.Request.Checkout checkout, CancellationToken cancellationToken = default)
     {
-        return CallCheckoutApi<Checkout>(BaseUrl + "api/payments", checkout);
+        return CallCheckoutApi<Checkout>(BaseUrl + "api/payments", checkout, cancellationToken);
     }
 
     public Task<Refund?> Refund(Models.Request.Refund refund,
-        string checkoutId)
+        string checkoutId, CancellationToken cancellationToken = default)
     {
         return CallCheckoutApi<Refund>(
-            BaseUrl + "api/payments/" + checkoutId + "/refund", refund);
+            BaseUrl + "api/payments/" + checkoutId + "/refund", refund, cancellationToken);
     }
 
     public Task<Forward?> Forward(Models.Request.Forward forward,
-        string checkoutId)
+        string checkoutId, CancellationToken cancellationToken = default)
     {
         return CallCheckoutApi<Forward>(
-            BaseUrl + "api/payments/" + checkoutId + "/forward", forward);
+            BaseUrl + "api/payments/" + checkoutId + "/forward", forward, cancellationToken);
     }
 
-    protected async Task<T?> CallCheckoutApi<T>(string url, object? body)
+    protected async Task<T?> CallCheckoutApi<T>(string url, object? body, CancellationToken cancellationToken)
     {
         var request = new HttpRequestMessage(body is null ? HttpMethod.Get : HttpMethod.Post, url);
         if (body is not null)
@@ -67,9 +71,20 @@ public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerialize
 
         request.Headers.Authorization = AuthHeader;
 
-        var response = await HttpClient.SendAsync(request, CancellationToken.None);
+        var response = await HttpClient.SendAsync(request, cancellationToken);
         var responseJson = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<T>(responseJson, JsonSerializerOptions);
+        if (response.IsSuccessStatusCode)
+        {
+            return JsonSerializer.Deserialize<T>(responseJson, JsonSerializerOptions);
+        }
+
+        if (!responseJson.StartsWith("{"))
+        {
+            response.EnsureSuccessStatusCode();
+        }
+
+        var apiError = JsonSerializer.Deserialize<Error>(responseJson, JsonSerializerOptions);
+        throw new ApiException(apiError);
     }
 }
