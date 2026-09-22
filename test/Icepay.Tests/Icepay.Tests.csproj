@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../ICEPAY_CheckoutSDK/ICEPAY_CheckoutSDK.csproj" />
+    <ProjectReference Include="../../src/Icepay/Icepay.csproj" />
   </ItemGroup>
 
 </Project>

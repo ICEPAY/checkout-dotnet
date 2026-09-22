@@ -9,7 +9,7 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ICEPAY_CheckoutSDK\ICEPAY_CheckoutSDK.csproj" />
+      <ProjectReference Include="../../Icepay/Icepay.csproj" />
     </ItemGroup>
 
     <ItemGroup>
