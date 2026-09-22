@@ -1,6 +1,6 @@
 ﻿using Icepay;
 using Icepay.Entities;
-using Icepay.Services;
+using Icepay.Requests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,13 +10,12 @@ Console.WriteLine("Hello, World!");
 using IHost host = Host.CreateDefaultBuilder(args).UseEnvironment("Development").Build();
 IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
 
-var merchantId = config["ICEPAY:MERCHANT_ID"];
-var merchantSecret = config["ICEPAY:MERCHANT_SECRET"];
+var merchantId = config["ICEPAY:MERCHANT_ID"] ?? throw new InvalidOperationException("ICEPAY:MERCHANT_ID is not configured.");
+var merchantSecret = config["ICEPAY:MERCHANT_SECRET"] ?? throw new InvalidOperationException("ICEPAY:MERCHANT_SECRET is not configured.");
 
-var checkoutClient = new CheckoutClient().WithAuthorization(merchantId, merchantSecret);
+var client = new IcepayClient(merchantId, merchantSecret);
 
-
-var paymentMethods = await checkoutClient.GetPaymentMethods();
+var paymentMethods = await client.PaymentMethods.ListAsync();
 
 foreach (var paymentMethod in paymentMethods)
 {
@@ -34,6 +33,6 @@ var options = new PaymentCreateOptions
 };
 options.Meta.WithCustomerEmail("test@example.com");
 
-var createdCheckout = await checkoutClient.CreateCheckout(options);
+var payment = await client.Payments.CreateAsync(options);
 
-Console.WriteLine(createdCheckout.Key + " - " + createdCheckout.Links.Checkout);
+Console.WriteLine(payment.Key + " - " + payment.Links.Checkout);

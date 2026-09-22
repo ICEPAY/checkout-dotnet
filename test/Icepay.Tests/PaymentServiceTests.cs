@@ -1,13 +1,13 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using Icepay.Entities;
+using Icepay.Requests;
 using Icepay.Tests.Helpers;
 using Xunit;
-using Icepay.Entities;
-using Icepay.Services;
 
 namespace Icepay.Tests;
 
-public class CheckoutClientTests_Serialization
+public class PaymentServiceTests
 {
     [Fact]
     public async Task CreateCheckout_DeserializesStringEnum_Correctly()
@@ -25,13 +25,18 @@ public class CheckoutClientTests_Serialization
               "links": { "checkout": "https://checkout.icepay.com/pay", "direct": null, "documentation": null }
             }
             """;
-            
+
         var fakeHandler = FakeHttpMessageHandler.FromJson(jsonResponse);
         using var httpClient = new HttpClient(fakeHandler);
-        
-        var client = new CheckoutClient(httpClient);
 
-        var checkoutRequest = new PaymentCreateOptions
+        var client = new IcepayClient(new IcepayClientOptions
+        {
+            MerchantId = "merchant",
+            MerchantSecret = "secret",
+            HttpClient = httpClient,
+        });
+
+        var options = new PaymentCreateOptions
         {
             Amount = new Amount(1000, Currency.Eur),
             Description = "Test Order",
@@ -40,19 +45,19 @@ public class CheckoutClientTests_Serialization
                 .WithIntegrationInformation("icepay-checkout-sdk", "1.0.0", "icepay-checkout-sdk-tests")
                 .WithCustomerEmail("test@example.com"),
             RedirectUrl = "https://example.com",
-            WebhookUrl = "https://example.com"
+            WebhookUrl = "https://example.com",
         };
 
         // Act
-        var result = await client.CreateCheckout(checkoutRequest);
+        var result = await client.Payments.CreateAsync(options);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(Status.Started, result!.Status);
-        
+
         // Verify other properties deserialized correctly as well
         Assert.Equal("c200aa9e-b203-455b-891d-03460775d722", result.Key);
-        Assert.Equal("test@example.com", result.Meta["customer"]["email"].ToString());
+        Assert.Equal("test@example.com", result.Meta!["customer"]!["email"]!.ToString());
         Assert.Equal(1000, result.Amount.Value);
     }
 }

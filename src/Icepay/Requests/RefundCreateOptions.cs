@@ -1,6 +1,6 @@
 using Icepay.Entities;
 
-namespace Icepay.Services;
+namespace Icepay.Requests;
 
 public class RefundCreateOptions(string reference, Amount amount, string? description = null)
 {

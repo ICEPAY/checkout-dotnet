@@ -8,8 +8,18 @@ using Xunit;
 
 namespace Icepay.Tests;
 
-public class CheckoutClient_GetPaymentMethods_Tests
+public class PaymentMethodServiceTests
 {
+    private static IcepayClient CreateClient(HttpClient httpClient)
+    {
+        return new IcepayClient(new IcepayClientOptions
+        {
+            MerchantId = "merchantId",
+            MerchantSecret = "merchantSecret",
+            HttpClient = httpClient,
+        });
+    }
+
     [Fact]
     public async Task GetPaymentMethods_ReturnsPaymentMethods()
     {
@@ -17,14 +27,13 @@ public class CheckoutClient_GetPaymentMethods_Tests
         var json = "[{\"id\":\"ideal\",\"description\":\"iDEAL\"},{\"id\":\"paypal\",\"description\":\"PayPal\"},{\"id\":\"card\",\"description\":\"Card\"},{\"id\":\"bancontact\",\"description\":\"Bancontact\"}]";
         var fakeHandler = FakeHttpMessageHandler.FromJson(json);
         using var httpClient = new HttpClient(fakeHandler);
-        var client = new CheckoutClient(httpClient, null);
+        var client = CreateClient(httpClient);
 
         // Act
-        var result = await client.GetPaymentMethods();
+        var result = await client.PaymentMethods.ListAsync();
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(4, result!.Length);
+        Assert.Equal(4, result.Length);
         Assert.Equal("ideal", result.First().Id);
         Assert.Equal("iDEAL", result.First().Description);
         Assert.Null(result.First().Logo);
@@ -37,14 +46,12 @@ public class CheckoutClient_GetPaymentMethods_Tests
     public async Task GetPaymentMethods_UsesAuthorizationHeader_WhenProvided()
     {
         // Arrange
-        var json = "[]";
-        var fakeHandler = FakeHttpMessageHandler.FromJson(json);
+        var fakeHandler = FakeHttpMessageHandler.FromJson("[]");
         using var httpClient = new HttpClient(fakeHandler);
-        var client = new CheckoutClient(httpClient, null);
-        client.WithAuthorization("merchantId", "merchantSecret");
+        var client = CreateClient(httpClient);
 
         // Act
-        await client.GetPaymentMethods();
+        await client.PaymentMethods.ListAsync();
 
         // Assert
         var request = fakeHandler.LastRequest;
