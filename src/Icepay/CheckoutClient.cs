@@ -3,10 +3,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ICEPAY.CheckoutSDK.Models.Response;
-using PaymentMethod = ICEPAY.CheckoutSDK.Models.Response.PaymentMethod;
+using Icepay.Entities;
+using Icepay.Services;
 
-namespace ICEPAY.CheckoutSDK;
+namespace Icepay;
 
 public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerializerOptions? jsonSerializerOptions = null)
 {
@@ -37,21 +37,18 @@ public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerialize
         return CallCheckoutApi<PaymentMethod[]?>(BaseUrl + "api/payments/methods", null);
     }
 
-    public Task<Checkout?> CreateCheckout(
-        Models.Request.Checkout checkout)
+    public Task<Payment?> CreateCheckout(PaymentCreateOptions options)
     {
-        return CallCheckoutApi<Checkout>(BaseUrl + "api/payments", checkout);
+        return CallCheckoutApi<Payment>(BaseUrl + "api/payments", options);
     }
 
-    public Task<Refund?> Refund(Models.Request.Refund refund,
-        string checkoutId)
+    public Task<Refund?> Refund(RefundCreateOptions refund, string checkoutId)
     {
         return CallCheckoutApi<Refund>(
             BaseUrl + "api/payments/" + Uri.EscapeDataString(checkoutId) + "/refund", refund);
     }
 
-    public Task<Forward?> Forward(Models.Request.Forward forward,
-        string checkoutId)
+    public Task<Forward?> Forward(ForwardCreateOptions forward, string checkoutId)
     {
         return CallCheckoutApi<Forward>(
             BaseUrl + "api/payments/" + Uri.EscapeDataString(checkoutId) + "/forward", forward);

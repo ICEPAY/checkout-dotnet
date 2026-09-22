@@ -3,10 +3,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using ICEPAY.CheckoutSDK.Tests.Helpers;
+using Icepay.Tests.Helpers;
 using Xunit;
 
-namespace ICEPAY.CheckoutSDK.Tests;
+namespace Icepay.Tests;
 
 public class CheckoutClient_GetPaymentMethods_Tests
 {

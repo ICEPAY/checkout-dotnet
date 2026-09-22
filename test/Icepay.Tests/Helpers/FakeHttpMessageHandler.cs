@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ICEPAY.CheckoutSDK.Tests.Helpers;
+namespace Icepay.Tests.Helpers;
 
 internal class FakeHttpMessageHandler : HttpMessageHandler
 {

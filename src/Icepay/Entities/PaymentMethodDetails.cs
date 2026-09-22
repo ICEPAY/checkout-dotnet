@@ -1,6 +1,6 @@
-namespace ICEPAY.CheckoutSDK.Models;
+namespace Icepay.Entities;
 
-public class PaymentMethod
+public class PaymentMethodDetails
 {
     public string? Type { get; set; }
     public string? Issuer { get; set; }

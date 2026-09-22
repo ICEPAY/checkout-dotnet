@@ -1,4 +1,4 @@
-namespace ICEPAY.CheckoutSDK.Models;
+namespace Icepay.Entities;
 
 public class Recipient
 {

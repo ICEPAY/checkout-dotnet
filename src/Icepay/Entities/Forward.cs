@@ -1,4 +1,4 @@
-namespace ICEPAY.CheckoutSDK.Models;
+namespace Icepay.Entities;
 
 public class Forward
 {
@@ -8,4 +8,5 @@ public class Forward
     public string Reference { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public Recipient? Recipient { get; set; }
+    public Payment? Payment { get; set; }
 }

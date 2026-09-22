@@ -1,4 +1,4 @@
-namespace ICEPAY.CheckoutSDK.Models.Response;
+namespace Icepay.Entities;
 
 public class PaymentMethod
 {

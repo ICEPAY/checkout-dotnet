@@ -1,12 +1,11 @@
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
-using ICEPAY.CheckoutSDK.Models;
-using ICEPAY.CheckoutSDK.Models.Request;
-using ICEPAY.CheckoutSDK.Tests.Helpers;
+using Icepay.Tests.Helpers;
 using Xunit;
+using Icepay.Entities;
+using Icepay.Services;
 
-namespace ICEPAY.CheckoutSDK.Tests;
+namespace Icepay.Tests;
 
 public class CheckoutClientTests_Serialization
 {
@@ -32,9 +31,9 @@ public class CheckoutClientTests_Serialization
         
         var client = new CheckoutClient(httpClient);
 
-        var checkoutRequest = new Checkout
+        var checkoutRequest = new PaymentCreateOptions
         {
-            Amount = new Amount(1000, Amount.CurrencyEur),
+            Amount = new Amount(1000, Currency.Eur),
             Description = "Test Order",
             Reference = "Order-123",
             Meta = new Metadata()

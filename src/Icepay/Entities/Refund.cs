@@ -1,4 +1,4 @@
-namespace ICEPAY.CheckoutSDK.Models;
+namespace Icepay.Entities;
 
 public class Refund
 {
@@ -7,4 +7,5 @@ public class Refund
     public Amount Amount { get; set; } = new();
     public string? Reference { get; set; }
     public string? Description { get; set; }
+    public Payment? Payment { get; set; }
 }
