@@ -2,19 +2,19 @@ namespace ICEPAY.CheckoutSDK.Models;
 
 public class Payment
 {
-    public required string Key { get; set; }
+    public string Key { get; set; } = string.Empty;
     public Status Status { get; set; }
-    public required Amount Amount { get; set; }
+    public Amount Amount { get; set; } = new();
     public PaymentMethod? PaymentMethod { get; set; }
-    public required string Reference { get; set; }
-    public required string Description { get; set; }
+    public string Reference { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public Metadata? Meta { get; set; }
     public string? WebhookUrl { get; set; }
     public string? RedirectUrl { get; set; }
-    public required Merchant Merchant { get; set; }
+    public Merchant Merchant { get; set; } = new();
     public bool IsTest { get; set; }
     public DateTime? ExpireAfter { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public required Links Links { get; set; }
+    public Links Links { get; set; } = new();
 }

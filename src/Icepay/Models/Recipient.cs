@@ -2,5 +2,5 @@ namespace ICEPAY.CheckoutSDK.Models;
 
 public class Recipient
 {
-    public required string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 }

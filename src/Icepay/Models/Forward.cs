@@ -2,10 +2,10 @@ namespace ICEPAY.CheckoutSDK.Models;
 
 public class Forward
 {
-    public required string Key { get; set; }
+    public string Key { get; set; } = string.Empty;
     public Status Status { get; set; }
-    public required Amount Amount { get; set; }
-    public required string Reference { get; set; }
-    public required string Description { get; set; }
+    public Amount Amount { get; set; } = new();
+    public string Reference { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public Recipient? Recipient { get; set; }
 }
