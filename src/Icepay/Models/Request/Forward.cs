@@ -2,11 +2,11 @@ namespace ICEPAY.CheckoutSDK.Models.Request;
 
 public class Forward
 {
-    public string Reference { get; set; }
-    public string Description { get; set; }
-    public Recipient Recipient { get; set; }
-    public Amount Amount { get; set; }
-    
+    public string Reference { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public Recipient Recipient { get; set; } = new();
+    public Amount Amount { get; set; } = new();
+
     public Forward WithReference(string reference)
     {
         Reference = reference;

@@ -47,19 +47,19 @@ public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerialize
         string checkoutId)
     {
         return CallCheckoutApi<Refund>(
-            BaseUrl + "api/payments/" + checkoutId + "/refund", refund);
+            BaseUrl + "api/payments/" + Uri.EscapeDataString(checkoutId) + "/refund", refund);
     }
 
     public Task<Forward?> Forward(Models.Request.Forward forward,
         string checkoutId)
     {
         return CallCheckoutApi<Forward>(
-            BaseUrl + "api/payments/" + checkoutId + "/forward", forward);
+            BaseUrl + "api/payments/" + Uri.EscapeDataString(checkoutId) + "/forward", forward);
     }
 
     protected async Task<T?> CallCheckoutApi<T>(string url, object? body)
     {
-        var request = new HttpRequestMessage(body is null ? HttpMethod.Get : HttpMethod.Post, url);
+        using var request = new HttpRequestMessage(body is null ? HttpMethod.Get : HttpMethod.Post, url);
         if (body is not null)
         {
             var json = JsonSerializer.Serialize(body, JsonSerializerOptions);
@@ -68,8 +68,11 @@ public class CheckoutClient(HttpMessageInvoker? httpClient = null, JsonSerialize
 
         request.Headers.Authorization = AuthHeader;
 
-        var response = await HttpClient.SendAsync(request, CancellationToken.None);
+        using var response = await HttpClient.SendAsync(request, CancellationToken.None);
         var responseJson = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"ICEPAY API returned {(int)response.StatusCode}: {responseJson}");
 
         return JsonSerializer.Deserialize<T>(responseJson, JsonSerializerOptions);
     }
