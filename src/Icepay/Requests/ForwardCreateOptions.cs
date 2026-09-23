@@ -1,5 +1,3 @@
-using Icepay.Entities;
-
 namespace Icepay.Requests;
 
 public class ForwardCreateOptions

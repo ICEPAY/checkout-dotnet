@@ -1,10 +1,8 @@
-using Icepay.Entities;
-
 namespace Icepay.Requests;
 
-public class RefundCreateOptions(string reference, Amount amount, string? description = null)
+public class RefundCreateOptions
 {
-    public string Reference { get; set; } = reference;
-    public string? Description { get; set; } = description;
-    public Amount Amount { get; set; } = amount;
+    public string Reference { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public Amount Amount { get; set; } = new();
 }
