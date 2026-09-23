@@ -1,5 +1,3 @@
-using Icepay.Entities;
-
 namespace Icepay.Requests;
 
 public class PaymentCreateOptions
@@ -10,6 +8,6 @@ public class PaymentCreateOptions
     public string RedirectUrl { get; set; } = string.Empty;
     public string WebhookUrl { get; set; } = string.Empty;
     public PaymentMethodDetails? PaymentMethod { get; set; }
-    public Metadata Meta { get; set; } = new();
+    public Metadata? Meta { get; set; }
     public int? ExpireAfter { get; set; }
 }

@@ -31,7 +31,7 @@ var options = new PaymentCreateOptions
     WebhookUrl = "https://www.example.com/webhook",
     PaymentMethod = new() { Type = "ideal" },
 };
-options.Meta.WithCustomerEmail("test@example.com");
+options.Meta?.WithCustomerEmail("test@example.com");
 
 var payment = await client.Payments.CreateAsync(options);
 
