@@ -1,38 +1,24 @@
 ﻿using Icepay;
 using Icepay.Entities;
 using Icepay.Requests;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-Console.WriteLine("Hello, World!");
+// Don't embed any credentials in production code. This is an example.
+// Get yours from the ICEPAY Portal > Merchants > View Merchant.
+var client = new IcepayClient("12345", "your-merchant-secret");
 
-using IHost host = Host.CreateDefaultBuilder(args).UseEnvironment("Development").Build();
-IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
+PaymentMethod[] paymentMethods = await client.PaymentMethods.ListAsync();
+Console.Write("Success! Here are your enabled payment methods: {0}\n", string.Join(", ", paymentMethods.Select(m => m.Id)));
 
-var merchantId = config["ICEPAY:MERCHANT_ID"] ?? throw new InvalidOperationException("ICEPAY:MERCHANT_ID is not configured.");
-var merchantSecret = config["ICEPAY:MERCHANT_SECRET"] ?? throw new InvalidOperationException("ICEPAY:MERCHANT_SECRET is not configured.");
-
-var client = new IcepayClient(merchantId, merchantSecret);
-
-var paymentMethods = await client.PaymentMethods.ListAsync();
-
-foreach (var paymentMethod in paymentMethods)
-{
-    Console.WriteLine(paymentMethod.Id + " - " + paymentMethod.Description);
-}
-
-var options = new PaymentCreateOptions
+var optionsPayment = new PaymentCreateOptions
 {
     Reference = "#" + DateTime.UtcNow.Ticks,
     Description = "Test payment",
     Amount = new Amount(1000, Currency.Eur),
     RedirectUrl = "https://www.example.com/redirect",
     WebhookUrl = "https://www.example.com/webhook",
-    PaymentMethod = new() { Type = "ideal" },
+    PaymentMethod = new PaymentMethodDetails { Type = "ideal" },
+    Meta = new Metadata().WithCustomerEmail("test@example.com"),
 };
-options.Meta?.WithCustomerEmail("test@example.com");
-
-var payment = await client.Payments.CreateAsync(options);
-
-Console.WriteLine(payment.Key + " - " + payment.Links.Checkout);
+Payment payment = await client.Payments.CreateAsync(optionsPayment);
+Console.Write("Success! Here is your payment key: {0}\n", payment.Key);
+Console.Write("Send your customer to: {0}\n", payment.Links.Checkout);
