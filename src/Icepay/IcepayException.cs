@@ -2,8 +2,20 @@
 
 namespace Icepay;
 
-public class IcepayException(HttpStatusCode statusCode, string body) : Exception(body)
+public class IcepayException : Exception
 {
-    public HttpStatusCode StatusCode { get; } = statusCode;
-    public string Body { get; } = body;
+    public IcepayException(string message)
+        : base(message)
+    {
+    }
+
+    public IcepayException(HttpStatusCode statusCode, string body)
+        : base(body)
+    {
+        StatusCode = statusCode;
+        Body = body;
+    }
+
+    public HttpStatusCode? StatusCode { get; }
+    public string? Body { get; }
 }
