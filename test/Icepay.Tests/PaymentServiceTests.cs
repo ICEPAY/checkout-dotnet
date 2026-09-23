@@ -36,7 +36,7 @@ public class PaymentServiceTests
             HttpClient = httpClient,
         });
 
-        var options = new PaymentCreateOptions
+        var options = new CheckoutCreateOptions
         {
             Amount = new Amount(1000, Currency.Eur),
             Description = "Test Order",
@@ -49,7 +49,7 @@ public class PaymentServiceTests
         };
 
         // Act
-        var result = await client.Payments.CreateAsync(options);
+        var result = await client.Payments.CreateCheckoutAsync(options);
 
         // Assert
         Assert.NotNull(result);

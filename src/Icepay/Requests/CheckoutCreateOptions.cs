@@ -1,6 +1,6 @@
 namespace Icepay.Requests;
 
-public class PaymentCreateOptions
+public class CheckoutCreateOptions
 {
     public string Reference { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

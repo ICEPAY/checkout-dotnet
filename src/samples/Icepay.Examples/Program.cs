@@ -5,7 +5,7 @@ using Icepay.Requests;
 // Get yours from the ICEPAY Portal > Merchants > View Merchant.
 var client = new IcepayClient("12345", "your-merchant-secret");
 
-Payment payment = await client.Payments.CreateAsync(new PaymentCreateOptions
+Payment payment = await client.Payments.CreateCheckoutAsync(new CheckoutCreateOptions
 {
     Reference = "#" + DateTime.UtcNow.Ticks,
     Description = "Test payment",
