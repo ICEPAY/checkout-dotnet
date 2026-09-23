@@ -1,14 +1,15 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
 namespace Icepay.Infrastructure;
 
-public class ApiRequestor(IcepayClientOptions options, HttpClient httpClient)
+public class ApiRequestor(IcepayClientOptions options)
 {
-    private readonly AuthenticationHeaderValue authHeader =
-        BasicAuthentication.Create(options.MerchantId, options.MerchantSecret);
+    private static readonly HttpClient DefaultHttpClient = new();
+    private readonly HttpClient httpClient = options.HttpClient ?? DefaultHttpClient;
+    private readonly AuthenticationHeaderValue authHeader = new("Basic",
+        Convert.ToBase64String(Encoding.UTF8.GetBytes($"{options.MerchantId}:{options.MerchantSecret}")));
 
     public async Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken cancellationToken)
     {
@@ -16,18 +17,17 @@ public class ApiRequestor(IcepayClientOptions options, HttpClient httpClient)
 
         if (body is not null)
         {
-            var json = JsonSerializer.Serialize(body, JsonSerialization.Options);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonSerializer.Serialize(body, JsonSerialization.Options), Encoding.UTF8, "application/json");
         }
 
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-        var responseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new IcepayException(response.StatusCode, responseJson);
+            throw new IcepayException(response.StatusCode, json);
         }
 
-        return JsonSerializer.Deserialize<T>(responseJson, JsonSerialization.Options)!;
+        return JsonSerializer.Deserialize<T>(json, JsonSerialization.Options)!;
     }
 }

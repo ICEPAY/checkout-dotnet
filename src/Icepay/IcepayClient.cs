@@ -1,13 +1,9 @@
-﻿using System.Net.Http;
-using Icepay.Infrastructure;
-using Icepay.Services;
+﻿using Icepay.Services;
 
 namespace Icepay;
 
 public class IcepayClient
 {
-    private static readonly HttpClient HttpClient = new();
-
     public IcepayClient(string merchantId, string merchantSecret)
         : this(new IcepayClientOptions { MerchantId = merchantId, MerchantSecret = merchantSecret })
     {
@@ -17,11 +13,10 @@ public class IcepayClient
     {
         if (string.IsNullOrWhiteSpace(options.MerchantId))
             throw new ArgumentException("MerchantId is required.", nameof(options));
-
         if (string.IsNullOrWhiteSpace(options.MerchantSecret))
             throw new ArgumentException("MerchantSecret is required.", nameof(options));
 
-        var requestor = new ApiRequestor(options, options.HttpClient ?? HttpClient);
+        var requestor = new ApiRequestor(options);
 
         Payments = new PaymentService(requestor);
         Refunds = new RefundService(requestor);
