@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Icepay.Infrastructure;
 
-public class ApiRequestor(IcepayClientOptions options)
+internal class ApiRequestor(IcepayClientOptions options)
 {
     private static readonly HttpClient DefaultHttpClient = new();
     private readonly HttpClient httpClient = options.HttpClient ?? DefaultHttpClient;
