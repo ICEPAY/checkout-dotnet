@@ -7,7 +7,6 @@
         <Nullable>enable</Nullable>
 
         <PackageId>ICEPAY.CheckoutSDK</PackageId>
-        <Version>1.0.0</Version>
         <Authors>ICEPAY</Authors>
         <Company>ICEPAY</Company>
         <Description>Official ICEPAY Checkout .NET SDK for creating payments, refunds, and forwards.</Description>
@@ -17,7 +16,7 @@
         <RepositoryType>git</RepositoryType>
 
         <!-- Licensing & visuals -->
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
         <!-- Or: <PackageLicenseFile>LICENSE</PackageLicenseFile> -->
         <PackageIcon>icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -41,7 +40,7 @@
             <!-- Include icon and readme in package -->
             <None Include="icon.png" Pack="true" PackagePath="/" />
             <None Include="README.md" Pack="true" PackagePath="/" />
-            <!-- If using license file: <None Include="..\..\LICENSE" Pack="true" PackagePath="/" /> -->
+            <None Include="..\..\LICENSE" Pack="true" PackagePath="/" />
         </ItemGroup>
         
     </PropertyGroup>

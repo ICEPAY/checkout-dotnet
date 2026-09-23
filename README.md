@@ -57,5 +57,22 @@ var refund = new Refund()
 var createdRefund = await checkoutClient.Refund(refund, createdCheckout.Key);
 ```
 
+Error Handling:
+
+```csharp
+try
+{
+    var methods = await checkoutClient.GetPaymentMethods(cancellationToken);
+}
+catch (HttpRequestException exception)
+{
+    // network/timeout
+}
+catch (ApiException exception)
+{
+    // server returned an error; inspect exception.StatusCode / exception.Error
+}
+```
+
 ## License
 GNU General Public License v3.0
