@@ -1,8 +1,9 @@
-using System.Net.Http;
-using System.Threading.Tasks;
 using Icepay.Entities;
 using Icepay.Requests;
 using Icepay.Tests.Helpers;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Icepay.Tests;
@@ -59,5 +60,34 @@ public class PaymentServiceTests
         Assert.Equal("c200aa9e-b203-455b-891d-03460775d722", result.Key);
         Assert.Equal("test@example.com", result.Meta!["customer"]!["email"]!.ToString());
         Assert.Equal(1000, result.Amount.Value);
+    }
+
+    [Fact]
+    public async Task CreateCheckout_Throws_WhenResponseIsNotJson()
+    {
+        using var httpClient = new HttpClient(FakeHttpMessageHandler.FromJson("<html>502</html>"));
+        var client = new IcepayClient(new IcepayClientOptions
+        {
+            MerchantId = "merchant",
+            MerchantSecret = "secret",
+            HttpClient = httpClient,
+        });
+
+        await Assert.ThrowsAsync<IcepayException>(() => client.Payments.GetAsync("pi-1"));
+    }
+
+    [Fact]
+    public async Task CreateCheckout_Throws_WhenResponseIsEmpty()
+    {
+        using var httpClient = new HttpClient(FakeHttpMessageHandler.FromJson("", HttpStatusCode.Unauthorized));
+        var client = new IcepayClient(new IcepayClientOptions
+        {
+            MerchantId = "merchant",
+            MerchantSecret = "secret",
+            HttpClient = httpClient,
+        });
+
+        var exception = await Assert.ThrowsAsync<IcepayException>(() => client.Payments.GetAsync("pi-1"));
+        Assert.Equal(HttpStatusCode.Unauthorized, exception.StatusCode);
     }
 }
