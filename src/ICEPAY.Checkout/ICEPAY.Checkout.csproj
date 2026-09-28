@@ -26,8 +26,16 @@
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<PackageIcon>icon.png</PackageIcon>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<None Include="../../README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
