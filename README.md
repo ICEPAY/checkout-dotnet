@@ -1,7 +1,6 @@
 # ICEPAY.Checkout
 
 [![NuGet](https://img.shields.io/nuget/v/ICEPAY.Checkout.svg)](https://www.nuget.org/packages/ICEPAY.Checkout/)
-[![Build](https://github.com/ICEPAY/checkout-dotnet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ICEPAY/checkout-dotnet/actions?query=branch%3Amain)
 
 The official .NET library for the ICEPAY [Checkout API](https://docs.icepay.com/developers/checkout/).
 
