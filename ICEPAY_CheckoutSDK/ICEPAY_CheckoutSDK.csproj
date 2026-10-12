@@ -1,10 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net8.0,net9.0</TargetFramework>
         <RootNamespace>ICEPAY.CheckoutSDK</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <PackageId>ICEPAY.CheckoutSDK</PackageId>
+        <Authors>ICEPAY</Authors>
+        <Company>ICEPAY</Company>
+        <Description>Official ICEPAY Checkout .NET SDK for creating payments, refunds, and forwards.</Description>
+        <PackageTags>ICEPAY;payments;checkout;SDK</PackageTags>
+        <PackageProjectUrl>https://github.com/ICEPAY/Checkout-DotNet-SDK</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ICEPAY/Checkout-DotNet-SDK</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <!-- Licensing & visuals -->
+        <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
+        <!-- Or: <PackageLicenseFile>LICENSE</PackageLicenseFile> -->
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- Reproducibility & SourceLink -->
+        <Deterministic>true</Deterministic>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+        <ItemGroup>
+            <!-- SourceLink for GitHub; pick the one matching your forge -->
+            <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+            <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" PrivateAssets="All" />
+            <!-- Optional analyzers: -->
+            <!-- <PackageReference Include="Roslynator.Analyzers" Version="4.12.0" PrivateAssets="All" /> -->
+            <!-- <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507" PrivateAssets="All" /> -->
+        </ItemGroup>
+
+        <ItemGroup>
+            <!-- Include icon and readme in package -->
+            <None Include="icon.png" Pack="true" PackagePath="/" />
+            <None Include="README.md" Pack="true" PackagePath="/" />
+            <None Include="..\..\LICENSE" Pack="true" PackagePath="/" />
+        </ItemGroup>
+        
     </PropertyGroup>
 
 </Project>
