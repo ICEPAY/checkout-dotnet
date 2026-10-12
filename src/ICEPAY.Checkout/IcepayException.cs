@@ -14,13 +14,15 @@ public class IcepayException : Exception
     {
     }
 
-    public IcepayException(HttpStatusCode statusCode, string body)
-        : base($"The ICEPAY API returned {(int)statusCode}: {body}")
+    public IcepayException(HttpStatusCode statusCode, string body, IcepayError? error = null)
+        : base($"The ICEPAY API returned {(int)statusCode}: {error?.Message ?? body}")
     {
         StatusCode = statusCode;
         Body = body;
+        Error = error;
     }
 
     public HttpStatusCode? StatusCode { get; }
     public string? Body { get; }
+    public IcepayError? Error { get; }
 }

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -26,22 +25,21 @@ internal class ApiRequestor(IcepayClientOptions options)
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new IcepayException(response.StatusCode, json);
+            throw new IcepayException(response.StatusCode, json, TryDeserialize<IcepayError>(json));
         }
 
-        return Deserialize<T>(json, response.StatusCode);
+        return TryDeserialize<T>(json) ?? throw new IcepayException(response.StatusCode, json);
     }
 
-    private static T Deserialize<T>(string json, HttpStatusCode statusCode)
+    private static T? TryDeserialize<T>(string json)
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(json, JsonSerialization.Options)
-                ?? throw new IcepayException(statusCode, json);
+            return JsonSerializer.Deserialize<T>(json, JsonSerialization.Options);
         }
-        catch (JsonException exception)
+        catch (JsonException)
         {
-            throw new IcepayException("The ICEPAY API returned a malformed response.", exception);
+            return default;
         }
     }
 }
