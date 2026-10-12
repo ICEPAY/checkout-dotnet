@@ -88,4 +88,23 @@ public class PaymentServiceTests
         var exception = await Assert.ThrowsAsync<IcepayException>(() => client.Payments.GetAsync("pi-1"));
         Assert.Equal(HttpStatusCode.Unauthorized, exception.StatusCode);
     }
+
+    [Fact]
+    public async Task Get_ThrowsWithParsedError_WhenResponseIsErrorJson()
+    {
+        const string json = """{"status":400,"type":"icepay/problem/payment/validation","message":"Validation failed.","errors":{"reference":["The reference field is required."]},"trace":"checkout-123"}""";
+        using var httpClient = new HttpClient(FakeHttpMessageHandler.FromJson(json, HttpStatusCode.BadRequest));
+        var client = new IcepayClient(new IcepayClientOptions
+        {
+            MerchantId = "merchant",
+            MerchantSecret = "secret",
+            HttpClient = httpClient,
+        });
+
+        var exception = await Assert.ThrowsAsync<IcepayException>(() => client.Payments.GetAsync("pi-1"));
+
+        Assert.Equal("Validation failed.", exception.Error?.Message);
+        Assert.Equal("checkout-123", exception.Error?.Trace);
+        Assert.Equal("The reference field is required.", exception.Error?.Errors?["reference"][0]);
+    }
 }
